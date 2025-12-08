@@ -83,9 +83,16 @@
                             <i class="fas fa-user"></i> {{ user.username }}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="{% url 'user_profile' user.username %}">My Recipes</a></li>
+                            <li><a class="dropdown-item" href="{% url 'user_profile' user.username %}">
+                                <i class="fas fa-book"></i> My Recipes
+                            </a></li>
+                            <li><a class="dropdown-item" href="{% url 'favorites' %}">
+                                <i class="fas fa-heart text-danger"></i> Favorites
+                            </a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                            <li><a class="dropdown-item" href="{% url 'logout' %}">
+                                <i class="fas fa-sign-out-alt"></i> Logout
+                            </a></li>
                         </ul>
                     </li>
                     {% else %}

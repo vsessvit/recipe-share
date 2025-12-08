@@ -208,6 +208,30 @@ class UserProfileView(ListView):
         return context
 
 
+class FavoritesListView(LoginRequiredMixin, ListView):
+    """
+    Display user's favorite/liked recipes
+    """
+    model = Recipe
+    template_name = 'recipes/favorites.html'
+    context_object_name = 'recipes'
+    paginate_by = 12
+    
+    def get_queryset(self):
+        # Get all recipes that the current user has liked
+        liked_recipe_ids = Like.objects.filter(user=self.request.user).values_list('recipe_id', flat=True)
+        return Recipe.objects.filter(
+            id__in=liked_recipe_ids, status='published'
+        ).select_related('author', 'category', 'country').annotate(
+            like_count=Count('likes')
+        ).order_by('-created_at')
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['total_favorites'] = self.get_queryset().count()
+        return context
+
+
 @login_required
 def add_comment(request, slug):
     """
