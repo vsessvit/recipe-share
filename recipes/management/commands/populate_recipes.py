@@ -137,7 +137,7 @@ Green onions for garnish''',
                 'status': 'published'
             },
             {
-                'title': 'Pancakes',
+                'title': 'Fluffy Buttermilk Pancakes',
                 'category': 'Breakfast',
                 'country': 'Italian',
                 'description': 'Fluffy, golden pancakes perfect for a weekend breakfast.',
@@ -146,18 +146,19 @@ Green onions for garnish''',
 2 tsp baking powder
 1/2 tsp salt
 1 egg
-300ml milk
+300ml buttermilk
 2 tbsp melted butter
 Butter for cooking
-Maple syrup for serving''',
+Maple syrup for serving
+Fresh berries (optional)''',
                 'instructions': '''1. Whisk together flour, sugar, baking powder, and salt.
-2. In another bowl, beat egg with milk and melted butter.
+2. In another bowl, beat egg with buttermilk and melted butter.
 3. Pour wet ingredients into dry and mix until just combined (lumps are okay).
 4. Heat a non-stick pan over medium heat and add butter.
 5. Pour 1/4 cup batter for each pancake.
 6. Cook until bubbles form on surface, then flip.
 7. Cook until golden brown on both sides.
-8. Serve warm with maple syrup.''',
+8. Serve warm with maple syrup and fresh berries.''',
                 'prep_time': 10,
                 'cook_time': 20,
                 'servings': 4,
@@ -192,6 +193,63 @@ Salt and pepper''',
                 'cook_time': 15,
                 'servings': 2,
                 'difficulty': 'easy',
+                'status': 'published'
+            },
+            {
+                'title': 'Chocolate Chip Cookies',
+                'category': 'Dessert',
+                'country': 'Italian',
+                'description': 'Classic chewy chocolate chip cookies with crispy edges.',
+                'ingredients': '''225g butter, softened
+200g brown sugar
+100g granulated sugar
+2 eggs
+2 tsp vanilla extract
+280g all-purpose flour
+1 tsp baking soda
+1 tsp salt
+300g chocolate chips''',
+                'instructions': '''1. Preheat oven to 180°C (350°F).
+2. Cream together butter and sugars until fluffy.
+3. Beat in eggs and vanilla.
+4. In separate bowl, whisk flour, baking soda, and salt.
+5. Gradually mix dry ingredients into wet mixture.
+6. Fold in chocolate chips.
+7. Drop rounded tablespoons of dough onto baking sheets.
+8. Bake for 10-12 minutes until edges are golden.
+9. Cool on baking sheet for 5 minutes before transferring to wire rack.''',
+                'prep_time': 15,
+                'cook_time': 12,
+                'servings': 24,
+                'difficulty': 'easy',
+                'status': 'published'
+            },
+            {
+                'title': 'Tiramisu',
+                'category': 'Dessert',
+                'country': 'Italian',
+                'description': 'Classic Italian dessert with coffee-soaked ladyfingers and mascarpone cream.',
+                'ingredients': '''6 egg yolks
+150g sugar
+500g mascarpone cheese
+300ml strong espresso, cooled
+3 tbsp coffee liqueur (optional)
+300g ladyfinger biscuits
+Cocoa powder for dusting
+Dark chocolate shavings (optional)''',
+                'instructions': '''1. Whisk egg yolks and sugar until thick and pale.
+2. Add mascarpone and beat until smooth.
+3. Mix espresso with coffee liqueur in a shallow dish.
+4. Quickly dip ladyfingers in coffee mixture (don't soak).
+5. Arrange layer of dipped ladyfingers in a dish.
+6. Spread half the mascarpone mixture over biscuits.
+7. Repeat with another layer of dipped ladyfingers and cream.
+8. Refrigerate for at least 4 hours or overnight.
+9. Dust with cocoa powder before serving.''',
+                'prep_time': 30,
+                'cook_time': 0,
+                'servings': 8,
+                'difficulty': 'medium',
                 'status': 'published'
             },
         ]
