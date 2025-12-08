@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ recipe.title }} - Recipe Share{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <!-- Recipe Image and Info -->
+        <div class="col-lg-8">
+            <div class="card mb-4 shadow">
+                {% if recipe.image %}
+                <img src="{{ recipe.image.url }}" class="card-img-top recipe-detail-img" alt="{{ recipe.title }}">
+                {% else %}
+                <div class="recipe-detail-img-placeholder d-flex align-items-center justify-content-center">
+                    <i class="fas fa-utensils fa-5x text-muted"></i>
+                </div>
+                {% endif %}
+                <div class="card-body">
+                    <h1 class="card-title">{{ recipe.title }}</h1>
+                    
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <span class="badge bg-secondary me-2">{{ recipe.category.name }}</span>
+                            <span class="badge bg-info me-2">{{ recipe.country.name }}</span>
+                            <span class="badge bg-warning">{{ recipe.get_difficulty_display }}</span>
+                        </div>
+                        <div class="text-muted">
+                            <i class="fas fa-heart"></i> {{ recipe.total_likes }} likes
+                        </div>
+                    </div>
+
+                    <p class="lead">{{ recipe.description }}</p>
+
+                    <div class="recipe-meta-detail row text-center mb-4">
+                        <div class="col-4">
+                            <i class="fas fa-clock fa-2x text-primary mb-2"></i>
+                            <p class="mb-0"><strong>Prep Time</strong></p>
+                            <p>{{ recipe.prep_time }} min</p>
+                        </div>
+                        <div class="col-4">
+                            <i class="fas fa-fire fa-2x text-danger mb-2"></i>
+                            <p class="mb-0"><strong>Cook Time</strong></p>
+                            <p>{{ recipe.cook_time }} min</p>
+                        </div>
+                        <div class="col-4">
+                            <i class="fas fa-users fa-2x text-success mb-2"></i>
+                            <p class="mb-0"><strong>Servings</strong></p>
+                            <p>{{ recipe.servings }}</p>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h3>Ingredients</h3>
+                        <div class="ingredients-list">
+                            {{ recipe.ingredients|linebreaks }}
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h3>Instructions</h3>
+                        <div class="instructions-list">
+                            {{ recipe.instructions|linebreaks }}
+                        </div>
+                    </div>
+
+                    <div class="recipe-author-info text-muted mb-3">
+                        <i class="fas fa-user"></i> Posted by 
+                        <a href="{% url 'user_profile' recipe.author.username %}">{{ recipe.author.username }}</a>
+                        on {{ recipe.created_at|date:"F d, Y" }}
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="d-flex gap-2">
+                        {% if user.is_authenticated %}
+                        <form method="post" action="{% url 'toggle_like' recipe.slug %}" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn {% if user_has_liked %}btn-danger{% else %}btn-outline-danger{% endif %}">
+                                <i class="fas fa-heart"></i> {% if user_has_liked %}Liked{% else %}Like{% endif %}
+                            </button>
+                        </form>
+                        {% endif %}
+                        
+                        {% if user == recipe.author %}
+                        <a href="{% url 'recipe_update' recipe.slug %}" class="btn btn-warning">
+                            <i class="fas fa-edit"></i> Edit
+                        </a>
+                        <a href="{% url 'recipe_delete' recipe.slug %}" class="btn btn-danger">
+                            <i class="fas fa-trash"></i> Delete
+                        </a>
+                        {% endif %}
+                        
+                        <button onclick="window.print()" class="btn btn-secondary">
+                            <i class="fas fa-print"></i> Print
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comments Section -->
+            <div class="card shadow">
+                <div class="card-header">
+                    <h4 class="mb-0">Comments ({{ comments.count }})</h4>
+                </div>
+                <div class="card-body">
+                    {% if user.is_authenticated %}
+                    <form method="post" action="{% url 'add_comment' recipe.slug %}" class="mb-4">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            {{ comment_form.content }}
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-comment"></i> Post Comment
+                        </button>
+                    </form>
+                    {% else %}
+                    <p class="alert alert-info">
+                        <a href="{% url 'login' %}">Login</a> to leave a comment.
+                    </p>
+                    {% endif %}
+
+                    <hr>
+
+                    {% if comments %}
+                    {% for comment in comments %}
+                    <div class="comment mb-3 p-3 bg-light rounded">
+                        <div class="d-flex justify-content-between">
+                            <strong>{{ comment.user.username }}</strong>
+                            <small class="text-muted">{{ comment.created_at|date:"F d, Y - g:i A" }}</small>
+                        </div>
+                        <p class="mb-1 mt-2">{{ comment.content }}</p>
+                        {% if user == comment.user %}
+                        <form method="post" action="{% url 'delete_comment' comment.pk %}" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this comment?')">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </form>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    <p class="text-muted">No comments yet. Be the first to comment!</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <div class="card mb-4 shadow">
+                <div class="card-header">
+                    <h5 class="mb-0">About This Recipe</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><strong>Category:</strong> {{ recipe.category.name }}</li>
+                        <li class="mb-2"><strong>Cuisine:</strong> {{ recipe.country.name }}</li>
+                        <li class="mb-2"><strong>Difficulty:</strong> {{ recipe.get_difficulty_display }}</li>
+                        <li class="mb-2"><strong>Total Time:</strong> {{ recipe.total_time }} minutes</li>
+                        <li class="mb-2"><strong>Servings:</strong> {{ recipe.servings }}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
