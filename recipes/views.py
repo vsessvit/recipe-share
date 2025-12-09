@@ -9,6 +9,7 @@ from django.contrib.auth.models import User
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.db.models import Q, Count
+from django.http import JsonResponse
 from .models import Recipe, Category, Country, Comment, Like
 from .forms import RecipeForm, CommentForm
 
@@ -33,6 +34,15 @@ class RecipeListView(ListView):
         context = super().get_context_data(**kwargs)
         context['categories'] = Category.objects.all()
         context['countries'] = Country.objects.all()
+        
+        # Get user's liked recipe IDs
+        if self.request.user.is_authenticated:
+            context['user_liked_ids'] = list(
+                Like.objects.filter(user=self.request.user).values_list('recipe_id', flat=True)
+            )
+        else:
+            context['user_liked_ids'] = []
+        
         return context
 
 
@@ -125,13 +135,20 @@ class CategoryRecipeListView(ListView):
         self.category = get_object_or_404(Category, slug=self.kwargs['slug'])
         return Recipe.objects.filter(
             category=self.category, status='published'
-        ).select_related('author', 'category', 'country').order_by('-created_at')
+        ).select_related('author', 'country').order_by('-created_at')
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['category'] = self.category
-        context['categories'] = Category.objects.all()
-        context['countries'] = Country.objects.all()
+        
+        # Get user's liked recipe IDs
+        if self.request.user.is_authenticated:
+            context['user_liked_ids'] = list(
+                Like.objects.filter(user=self.request.user).values_list('recipe_id', flat=True)
+            )
+        else:
+            context['user_liked_ids'] = []
+        
         return context
 
 
@@ -155,6 +172,15 @@ class CountryRecipeListView(ListView):
         context['country'] = self.country
         context['categories'] = Category.objects.all()
         context['countries'] = Country.objects.all()
+        
+        # Get user's liked recipe IDs
+        if self.request.user.is_authenticated:
+            context['user_liked_ids'] = list(
+                Like.objects.filter(user=self.request.user).values_list('recipe_id', flat=True)
+            )
+        else:
+            context['user_liked_ids'] = []
+        
         return context
 
 
@@ -183,6 +209,15 @@ class SearchRecipeView(ListView):
         context['query'] = self.request.GET.get('q', '')
         context['categories'] = Category.objects.all()
         context['countries'] = Country.objects.all()
+        
+        # Get user's liked recipe IDs
+        if self.request.user.is_authenticated:
+            context['user_liked_ids'] = list(
+                Like.objects.filter(user=self.request.user).values_list('recipe_id', flat=True)
+            )
+        else:
+            context['user_liked_ids'] = []
+        
         return context
 
 
@@ -205,6 +240,15 @@ class UserProfileView(ListView):
         context = super().get_context_data(**kwargs)
         context['profile_user'] = self.profile_user
         context['total_recipes'] = self.get_queryset().count()
+        
+        # Get user's liked recipe IDs
+        if self.request.user.is_authenticated:
+            context['user_liked_ids'] = list(
+                Like.objects.filter(user=self.request.user).values_list('recipe_id', flat=True)
+            )
+        else:
+            context['user_liked_ids'] = []
+        
         return context
 
 
@@ -229,6 +273,12 @@ class FavoritesListView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['total_favorites'] = self.get_queryset().count()
+        
+        # Get user's liked recipe IDs (all recipes in favorites are liked by definition)
+        context['user_liked_ids'] = list(
+            Like.objects.filter(user=self.request.user).values_list('recipe_id', flat=True)
+        )
+        
         return context
 
 
@@ -280,8 +330,20 @@ def toggle_like(request, slug):
     
     if not created:
         like.delete()
-        messages.success(request, 'Recipe removed from favorites!')
+        liked = False
+        message = 'Recipe removed from favorites!'
     else:
-        messages.success(request, 'Recipe added to favorites!')
+        liked = True
+        message = 'Recipe added to favorites!'
     
-    return redirect('recipe_detail', slug=slug)
+    # If AJAX request, return JSON
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return JsonResponse({
+            'success': True,
+            'liked': liked,
+            'total_likes': recipe.total_likes()
+        })
+    
+    # Otherwise, redirect back to the page the user came from
+    messages.success(request, message)
+    return redirect(request.META.get('HTTP_REFERER', 'home'))
