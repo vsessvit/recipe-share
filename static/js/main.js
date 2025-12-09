@@ -133,3 +133,76 @@ document.addEventListener('DOMContentLoaded', function() {
     
     console.log('Recipe Share JavaScript loaded successfully!');
 });
+
+// AJAX Like/Unlike functionality
+document.addEventListener('DOMContentLoaded', function() {
+    // Get CSRF token
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    
+    const csrftoken = getCookie('csrftoken');
+    
+    // Handle like button clicks
+    document.addEventListener('submit', function(e) {
+        if (e.target.classList.contains('like-form') || 
+            e.target.querySelector('.like-heart-btn')) {
+            e.preventDefault();
+            
+            const form = e.target;
+            const url = form.action;
+            const button = form.querySelector('button[type="submit"]');
+            const heartSpan = button.querySelector('span');
+            const heartIcon = heartSpan.querySelector('i');
+            
+            // Send AJAX request
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                credentials: 'same-origin'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update heart color
+                    if (data.liked) {
+                        heartSpan.classList.remove('text-muted');
+                        heartSpan.classList.add('text-danger');
+                        button.setAttribute('title', 'Remove from favorites');
+                    } else {
+                        heartSpan.classList.remove('text-danger');
+                        heartSpan.classList.add('text-muted');
+                        button.setAttribute('title', 'Add to favorites');
+                    }
+                    
+                    // Update like count - rebuild the content with icon and count
+                    heartSpan.innerHTML = '<i class="fas fa-heart"></i> ' + data.total_likes;
+                    
+                    // Add animation
+                    const newIcon = heartSpan.querySelector('i');
+                    newIcon.classList.add('fa-beat');
+                    setTimeout(() => {
+                        newIcon.classList.remove('fa-beat');
+                    }, 1000);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    });
+});
