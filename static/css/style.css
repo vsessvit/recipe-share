@@ -364,3 +364,17 @@ button:focus,
 * {
     transition: background-color 0.3s ease, color 0.3s ease;
 }
+
+/* Like Button Styling */
+.like-heart-btn {
+    cursor: pointer;
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.like-heart-btn:hover {
+    transform: scale(1.2);
+}
+
+.like-heart-btn:active {
+    transform: scale(0.9);
+}
