@@ -58,9 +58,14 @@
                         <small class="text-muted">
                             <i class="fas fa-user"></i> {{ recipe.author.username }}
                         </small>
-                        <small class="text-muted">
-                            <i class="fas fa-heart text-danger"></i> {{ recipe.like_count }}
-                        </small>
+                        <form method="post" action="{% url 'toggle_like' recipe.slug %}" class="d-inline like-form">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-link p-0 text-decoration-none like-heart-btn" style="border: none; background: none;" title="Remove from favorites">
+                                <small class="text-danger">
+                                    <i class="fas fa-heart"></i> {{ recipe.like_count }}
+                                </small>
+                            </button>
+                        </form>
                     </div>
                     
                     <a href="{% url 'recipe_detail' recipe.slug %}" class="btn btn-primary mt-3">View Recipe</a>
