@@ -38,6 +38,18 @@
                         <div class="d-flex justify-content-between align-items-center text-muted small">
                             <span><i class="fas fa-clock"></i> {{ recipe.total_time }} min</span>
                             <span><i class="fas fa-signal"></i> {{ recipe.get_difficulty_display }}</span>
+                            {% if user.is_authenticated %}
+                            <form method="post" action="{% url 'toggle_like' recipe.slug %}" class="d-inline like-form">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-link p-0 text-decoration-none like-heart-btn" style="border: none; background: none;" title="{% if recipe.id in user_liked_ids %}Remove from favorites{% else %}Add to favorites{% endif %}">
+                                    <span class="{% if recipe.id in user_liked_ids %}text-danger{% else %}text-muted{% endif %}">
+                                        <i class="fas fa-heart"></i> {{ recipe.total_likes }}
+                                    </span>
+                                </button>
+                            </form>
+                            {% else %}
+                            <span><i class="fas fa-heart"></i> {{ recipe.total_likes }}</span>
+                            {% endif %}
                         </div>
                     </div>
                     
