@@ -32,7 +32,7 @@ class RecipeForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Add CSS classes for crispy forms
+        # Apply Bootstrap styling to all form fields
         for field in self.fields:
             self.fields[field].widget.attrs.update({'class': 'form-control'})
 

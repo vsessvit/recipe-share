@@ -2,10 +2,6 @@ from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User
 from recipes.models import Category, Country, Recipe
 from django.utils.text import slugify
-import os
-from django.core.files import File
-from urllib.request import urlretrieve
-from pathlib import Path
 
 
 class Command(BaseCommand):

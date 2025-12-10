@@ -18,10 +18,10 @@ class UserRegisterForm(UserCreationForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Add CSS classes
+        # Apply Bootstrap styling to all form fields
         for field in self.fields:
             self.fields[field].widget.attrs.update({'class': 'form-control'})
         
-        # Update help text
+        # Provide user-friendly help text
         self.fields['username'].help_text = 'Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.'
         self.fields['password1'].help_text = 'Your password must contain at least 8 characters.'

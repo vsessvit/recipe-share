@@ -130,8 +130,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     }
-    
-    console.log('Recipe Share JavaScript loaded successfully!');
 });
 
 // AJAX Like/Unlike functionality
