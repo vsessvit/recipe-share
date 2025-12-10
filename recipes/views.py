@@ -90,7 +90,7 @@ class RecipeCreateView(LoginRequiredMixin, CreateView):
 
 class RecipeUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     """
-    Update an existing recipe (only recipe author)
+    Update an existing recipe. Only the recipe author or site admin can edit.
     """
     model = Recipe
     form_class = RecipeForm
@@ -98,7 +98,7 @@ class RecipeUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     
     def test_func(self):
         recipe = self.get_object()
-        return self.request.user == recipe.author
+        return self.request.user == recipe.author or self.request.user.is_staff
     
     def form_valid(self, form):
         messages.success(self.request, 'Recipe updated successfully!')
@@ -107,7 +107,7 @@ class RecipeUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 class RecipeDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     """
-    Delete a recipe (only recipe author)
+    Delete a recipe. Only the recipe author or site admin can delete.
     """
     model = Recipe
     template_name = 'recipes/recipe_confirm_delete.html'
@@ -115,7 +115,7 @@ class RecipeDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     
     def test_func(self):
         recipe = self.get_object()
-        return self.request.user == recipe.author
+        return self.request.user == recipe.author or self.request.user.is_staff
     
     def delete(self, request, *args, **kwargs):
         messages.success(request, 'Recipe deleted successfully!')
@@ -319,7 +319,7 @@ def add_comment(request, slug):
 @login_required
 def delete_comment(request, pk):
     """
-    Delete a comment. Only the comment author can delete their own comments.
+    Delete a comment. Only the comment author or site admin can delete.
     
     Args:
         request (HttpRequest): The HTTP request object
@@ -333,7 +333,7 @@ def delete_comment(request, pk):
     """
     comment = get_object_or_404(Comment, pk=pk)
     
-    if request.user == comment.user:
+    if request.user == comment.user or request.user.is_staff:
         recipe_slug = comment.recipe.slug
         try:
             comment.delete()
