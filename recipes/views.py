@@ -285,18 +285,31 @@ class FavoritesListView(LoginRequiredMixin, ListView):
 @login_required
 def add_comment(request, slug):
     """
-    Add a comment to a recipe
+    Add a comment to a recipe.
+    
+    Args:
+        request (HttpRequest): The HTTP request object
+        slug (str): The unique slug identifier for the recipe
+    
+    Returns:
+        HttpResponseRedirect: Redirects to the recipe detail page
+    
+    Raises:
+        Http404: If recipe with given slug does not exist
     """
     recipe = get_object_or_404(Recipe, slug=slug)
     
     if request.method == 'POST':
         form = CommentForm(request.POST)
         if form.is_valid():
-            comment = form.save(commit=False)
-            comment.recipe = recipe
-            comment.user = request.user
-            comment.save()
-            messages.success(request, 'Comment added successfully!')
+            try:
+                comment = form.save(commit=False)
+                comment.recipe = recipe
+                comment.user = request.user
+                comment.save()
+                messages.success(request, 'Comment added successfully!')
+            except Exception as e:
+                messages.error(request, 'Unable to save comment. Please try again.')
         else:
             messages.error(request, 'Error adding comment. Please try again.')
     
@@ -306,14 +319,27 @@ def add_comment(request, slug):
 @login_required
 def delete_comment(request, pk):
     """
-    Delete a comment (only comment author)
+    Delete a comment. Only the comment author can delete their own comments.
+    
+    Args:
+        request (HttpRequest): The HTTP request object
+        pk (int): Primary key of the comment to delete
+    
+    Returns:
+        HttpResponseRedirect: Redirects to the recipe detail page
+    
+    Raises:
+        Http404: If comment with given pk does not exist
     """
     comment = get_object_or_404(Comment, pk=pk)
     
     if request.user == comment.user:
         recipe_slug = comment.recipe.slug
-        comment.delete()
-        messages.success(request, 'Comment deleted successfully!')
+        try:
+            comment.delete()
+            messages.success(request, 'Comment deleted successfully!')
+        except Exception as e:
+            messages.error(request, 'Unable to delete comment. Please try again.')
         return redirect('recipe_detail', slug=recipe_slug)
     else:
         messages.error(request, 'You can only delete your own comments.')
@@ -323,27 +349,50 @@ def delete_comment(request, pk):
 @login_required
 def toggle_like(request, slug):
     """
-    Toggle like/unlike on a recipe
+    Toggle like/unlike status on a recipe. Handles both AJAX and regular requests.
+    
+    Args:
+        request (HttpRequest): The HTTP request object
+        slug (str): The unique slug identifier for the recipe
+    
+    Returns:
+        JsonResponse: If AJAX request, returns JSON with like status and count
+        HttpResponseRedirect: If regular request, redirects to referring page or home
+    
+    Raises:
+        Http404: If recipe with given slug does not exist
     """
     recipe = get_object_or_404(Recipe, slug=slug)
-    like, created = Like.objects.get_or_create(recipe=recipe, user=request.user)
     
-    if not created:
-        like.delete()
-        liked = False
-        message = 'Recipe removed from favorites!'
-    else:
-        liked = True
-        message = 'Recipe added to favorites!'
-    
-    # If AJAX request, return JSON
-    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        return JsonResponse({
-            'success': True,
-            'liked': liked,
-            'total_likes': recipe.total_likes()
-        })
-    
-    # Otherwise, redirect back to the page the user came from
-    messages.success(request, message)
-    return redirect(request.META.get('HTTP_REFERER', 'home'))
+    try:
+        like, created = Like.objects.get_or_create(recipe=recipe, user=request.user)
+        
+        if not created:
+            like.delete()
+            liked = False
+            message = 'Recipe removed from favorites!'
+        else:
+            liked = True
+            message = 'Recipe added to favorites!'
+        
+        # If AJAX request, return JSON
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({
+                'success': True,
+                'liked': liked,
+                'total_likes': recipe.total_likes()
+            })
+        
+        # Otherwise, redirect back to the page the user came from
+        messages.success(request, message)
+        return redirect(request.META.get('HTTP_REFERER', 'home'))
+        
+    except Exception as e:
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({
+                'success': False,
+                'error': 'Unable to update favorite status'
+            }, status=500)
+        else:
+            messages.error(request, 'Unable to update favorite status. Please try again.')
+            return redirect(request.META.get('HTTP_REFERER', 'home'))
