@@ -47,6 +47,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     # Third-party apps
+    "cloudinary_storage",
+    "cloudinary",
     "crispy_forms",
     "crispy_bootstrap5",
     # Local apps
@@ -172,3 +174,16 @@ if not DEBUG:
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
     X_FRAME_OPTIONS = "DENY"
+
+# Cloudinary configuration for media storage
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+
+CLOUDINARY_STORAGE = {
+    "CLOUD_NAME": config("CLOUDINARY_CLOUD_NAME", default=""),
+    "API_KEY": config("CLOUDINARY_API_KEY", default=""),
+    "API_SECRET": config("CLOUDINARY_API_SECRET", default=""),
+}
+
+DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
