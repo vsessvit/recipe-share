@@ -65,6 +65,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "recipe_project.middleware.SecurityHeadersMiddleware",
 ]
 
 ROOT_URLCONF = "recipe_project.urls"
@@ -168,12 +169,24 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Security settings for production
 if not DEBUG:
+    # HTTPS/SSL
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
+    
+    # Security Headers
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
     X_FRAME_OPTIONS = "DENY"
+    SECURE_HSTS_SECONDS = 31536000  # 1 year
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    
+    # Referrer Policy
+    SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
+    
+    # Permissions Policy
+    SECURE_CROSS_ORIGIN_OPENER_POLICY = "same-origin"
 
 # Cloudinary configuration for media storage
 import cloudinary
