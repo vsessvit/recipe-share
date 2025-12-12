@@ -12,6 +12,10 @@ class SecurityHeadersMiddleware:
     def __call__(self, request):
         response = self.get_response(request)
 
+        # Only add security headers in production (when HTTPS is available)
+        if not request.is_secure():
+            return response
+
         # Permissions Policy (formerly Feature Policy)
         response["Permissions-Policy"] = (
             "geolocation=(), "
@@ -24,15 +28,17 @@ class SecurityHeadersMiddleware:
             "accelerometer=()"
         )
 
-        # Content Security Policy (allows Cloudinary images)
+        # Content Security Policy (allows all legitimate external resources)
         response["Content-Security-Policy"] = (
             "default-src 'self'; "
-            "img-src 'self' https://res.cloudinary.com data:; "
-            "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://code.jquery.com; "
-            "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; "
-            "font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net; "
-            "connect-src 'self'; "
-            "frame-ancestors 'none';"
+            "img-src 'self' https://res.cloudinary.com https: data: blob:; "
+            "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://stackpath.bootstrapcdn.com; "
+            "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; "
+            "font-src 'self' https://cdnjs.cloudflare.com data:; "
+            "connect-src 'self' https://res.cloudinary.com; "
+            "frame-ancestors 'none'; "
+            "base-uri 'self'; "
+            "form-action 'self';"
         )
 
         return response
