@@ -177,7 +177,7 @@ if not DEBUG:
     # Security Headers
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
-    X_FRAME_OPTIONS = "DENY"
+    X_FRAME_OPTIONS = "SAMEORIGIN"  # Temporarily allow for amiresponsive
     SECURE_HSTS_SECONDS = 31536000  # 1 year
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
@@ -185,8 +185,8 @@ if not DEBUG:
     # Referrer Policy
     SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
     
-    # Permissions Policy
-    SECURE_CROSS_ORIGIN_OPENER_POLICY = "same-origin"
+    # Permissions Policy (temporarily disabled for amiresponsive screenshot)
+    # SECURE_CROSS_ORIGIN_OPENER_POLICY = "same-origin"
 
 # Cloudinary configuration for media storage
 import cloudinary
