@@ -1,5 +1,11 @@
 /* Custom CSS for Recipe Share */
 
+/* Font Display Optimization */
+@font-face {
+    font-family: 'Font Awesome 6 Free';
+    font-display: swap;
+}
+
 /* WCAG AA Compliant Color Scheme */
 :root {
     --primary-color: #2c5f2d;       /* Forest green - 4.6:1 contrast */

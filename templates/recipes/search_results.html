@@ -20,7 +20,7 @@
         <div class="col-md-6 col-lg-4 mb-4">
             <div class="card recipe-card h-100 shadow-sm">
                 {% if recipe.image %}
-                <img src="{{ recipe.image.url }}" class="card-img-top recipe-img" alt="{{ recipe.title }}">
+                <img src="{{ recipe.image.url }}" class="card-img-top recipe-img" alt="{{ recipe.title }}" loading="lazy" decoding="async">
                 {% else %}
                 <div class="card-img-top recipe-img-placeholder d-flex align-items-center justify-content-center">
                     <i class="fas fa-utensils fa-3x text-muted"></i>
