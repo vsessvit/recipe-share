@@ -1,1 +1,1 @@
-from django.db import models
+# Models module - using Django's built-in User model

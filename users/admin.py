@@ -1,1 +1,1 @@
-from django.contrib import admin
+# Django admin auto-discovery handles User model registration
