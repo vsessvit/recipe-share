@@ -29,7 +29,6 @@ class SecurityHeadersMiddleware:
         )
 
         # Content Security Policy (allows all legitimate external resources)
-        # Temporarily allow frame-ancestors for amiresponsive screenshot
         response["Content-Security-Policy"] = (
             "default-src 'self'; "
             "img-src 'self' https://res.cloudinary.com https: data: blob:; "
@@ -37,7 +36,7 @@ class SecurityHeadersMiddleware:
             "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; "
             "font-src 'self' https://cdnjs.cloudflare.com data:; "
             "connect-src 'self' https://res.cloudinary.com; "
-            "frame-ancestors https://ui.dev; "
+            "frame-ancestors 'none'; "
             "base-uri 'self'; "
             "form-action 'self';"
         )
