@@ -65,6 +65,8 @@ htmlcov/
 # Node.js / NPM
 node_modules/
 package-lock.json
+package.json
+eslint.config.mjs
 
 # Project Planning (personal notes)
 PROJECT_PLAN.md
