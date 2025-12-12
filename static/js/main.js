@@ -1,4 +1,5 @@
 // Main JavaScript for Recipe Share
+/* global bootstrap */
 
 document.addEventListener('DOMContentLoaded', function() {
     
@@ -162,7 +163,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const url = form.action;
             const button = form.querySelector('button[type="submit"]');
             const heartSpan = button.querySelector('span');
-            const heartIcon = heartSpan.querySelector('i');
             
             // Send AJAX request
             fetch(url, {

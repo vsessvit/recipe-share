@@ -62,6 +62,10 @@ htmlcov/
 *.bak
 *.tmp
 
+# Node.js / NPM
+node_modules/
+package-lock.json
+
 # Project Planning (personal notes)
 PROJECT_PLAN.md
 NOTES.md
