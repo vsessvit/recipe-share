@@ -14,12 +14,17 @@ class RecipeModelTest(TestCase):
     def setUp(self):
         """Set up test data"""
         self.user = User.objects.create_user(
-            username="testuser", password="testpass123"
+            username="testuser",
+            password="testpass123"
         )
         self.category = Category.objects.create(
-            name="Test Category", slug="test-category"
+            name="Test Category",
+            slug="test-category"
         )
-        self.country = Country.objects.create(name="Test Country", slug="test-country")
+        self.country = Country.objects.create(
+            name="Test Country",
+            slug="test-country"
+        )
         self.recipe = Recipe.objects.create(
             title="Test Recipe",
             slug="test-recipe",
@@ -66,10 +71,16 @@ class RecipeModelTest(TestCase):
     def test_total_comments(self):
         """Test total approved comments count"""
         Comment.objects.create(
-            recipe=self.recipe, user=self.user, content="Great recipe!", approved=True
+            recipe=self.recipe,
+            user=self.user,
+            content="Great recipe!",
+            approved=True
         )
         Comment.objects.create(
-            recipe=self.recipe, user=self.user, content="Not approved", approved=False
+            recipe=self.recipe,
+            user=self.user,
+            content="Not approved",
+            approved=False
         )
         self.assertEqual(self.recipe.total_comments(), 1)
 
@@ -116,7 +127,8 @@ class CommentModelTest(TestCase):
     def setUp(self):
         """Set up test data"""
         self.user = User.objects.create_user(
-            username="testuser", password="testpass123"
+            username="testuser",
+            password="testpass123"
         )
         self.category = Category.objects.create(name="Dinner")
         self.country = Country.objects.create(name="Italian")
@@ -137,7 +149,9 @@ class CommentModelTest(TestCase):
     def test_comment_creation(self):
         """Test comment is created successfully"""
         comment = Comment.objects.create(
-            recipe=self.recipe, user=self.user, content="Great recipe!"
+            recipe=self.recipe,
+            user=self.user,
+            content="Great recipe!"
         )
         self.assertEqual(comment.recipe, self.recipe)
         self.assertEqual(comment.user, self.user)
@@ -151,7 +165,8 @@ class LikeModelTest(TestCase):
     def setUp(self):
         """Set up test data"""
         self.user = User.objects.create_user(
-            username="testuser", password="testpass123"
+            username="testuser",
+            password="testpass123"
         )
         self.category = Category.objects.create(name="Dinner")
         self.country = Country.objects.create(name="Italian")
@@ -171,16 +186,25 @@ class LikeModelTest(TestCase):
 
     def test_like_creation(self):
         """Test like is created successfully"""
-        like = Like.objects.create(recipe=self.recipe, user=self.user)
+        like = Like.objects.create(
+            recipe=self.recipe,
+            user=self.user
+        )
         self.assertEqual(like.recipe, self.recipe)
         self.assertEqual(like.user, self.user)
         self.assertEqual(str(like), "testuser likes Pasta")
 
     def test_like_unique_together(self):
         """Test one user can only like a recipe once"""
-        Like.objects.create(recipe=self.recipe, user=self.user)
+        Like.objects.create(
+            recipe=self.recipe,
+            user=self.user
+        )
         with self.assertRaises(Exception):
-            Like.objects.create(recipe=self.recipe, user=self.user)
+            Like.objects.create(
+                recipe=self.recipe,
+                user=self.user
+            )
 
 
 @override_settings(
@@ -193,10 +217,14 @@ class RecipeViewTest(TestCase):
         """Set up test data and client"""
         self.client = Client()
         self.user = User.objects.create_user(
-            username="testuser", password="testpass123", email="test@example.com"
+            username="testuser",
+            password="testpass123",
+            email="test@example.com"
         )
         self.admin = User.objects.create_user(
-            username="admin", password="admin123", is_staff=True
+            username="admin",
+            password="admin123",
+            is_staff=True
         )
         self.category = Category.objects.create(name="Dinner")
         self.country = Country.objects.create(name="Italian")
@@ -296,7 +324,8 @@ class RecipeViewTest(TestCase):
     def test_recipe_delete_only_author(self):
         """Test only author can delete recipe"""
         User.objects.create_user(
-            username="otheruser", password="testpass123"
+            username="otheruser",
+            password="testpass123"
         )
         self.client.login(username="otheruser", password="testpass123")
         response = self.client.get(
@@ -326,13 +355,17 @@ class RecipeViewTest(TestCase):
 
     def test_search_view(self):
         """Test search functionality"""
-        response = self.client.get(reverse("search_recipes"), {"q": "pasta"})
+        response = self.client.get(
+            reverse("search_recipes"), {"q": "pasta"}
+        )
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Pasta Carbonara")
 
     def test_search_view_no_results(self):
         """Test search with no results"""
-        response = self.client.get(reverse("search_recipes"), {"q": "nonexistent"})
+        response = self.client.get(
+            reverse("search_recipes"), {"q": "nonexistent"}
+        )
         self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, "Pasta Carbonara")
 
@@ -348,10 +381,13 @@ class CommentViewTest(TestCase):
         self.client = Client()
         self.client = Client()
         self.user = User.objects.create_user(
-            username="testuser", password="testpass123"
+            username="testuser",
+            password="testpass123"
         )
         self.admin = User.objects.create_user(
-            username="admin", password="admin123", is_staff=True
+            username="admin",
+            password="admin123",
+            is_staff=True
         )
         self.category = Category.objects.create(name="Dinner")
         self.country = Country.objects.create(name="Italian")
@@ -393,10 +429,13 @@ class CommentViewTest(TestCase):
     def test_delete_comment_only_author(self):
         """Test only comment author can delete"""
         comment = Comment.objects.create(
-            recipe=self.recipe, user=self.user, content="Test comment"
+            recipe=self.recipe,
+            user=self.user,
+            content="Test comment"
         )
         User.objects.create_user(
-            username="otheruser", password="testpass123"
+            username="otheruser",
+            password="testpass123"
         )
         self.client.login(username="otheruser", password="testpass123")
         self.client.post(
@@ -407,7 +446,9 @@ class CommentViewTest(TestCase):
     def test_delete_comment_admin_can_delete(self):
         """Test admin can delete any comment"""
         comment = Comment.objects.create(
-            recipe=self.recipe, user=self.user, content="Test comment"
+            recipe=self.recipe,
+            user=self.user,
+            content="Test comment"
         )
         self.client.login(username="admin", password="admin123")
         self.client.post(
@@ -427,7 +468,8 @@ class LikeViewTest(TestCase):
         self.client = Client()
         self.client = Client()
         self.user = User.objects.create_user(
-            username="testuser", password="testpass123"
+            username="testuser",
+            password="testpass123"
         )
         self.category = Category.objects.create(name="Dinner")
         self.country = Country.objects.create(name="Italian")
@@ -494,7 +536,8 @@ class UserProfileViewTest(TestCase):
         self.client = Client()
         self.client = Client()
         self.user = User.objects.create_user(
-            username="testuser", password="testpass123"
+            username="testuser",
+            password="testpass123"
         )
         self.category = Category.objects.create(name="Dinner")
         self.country = Country.objects.create(name="Italian")

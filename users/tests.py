@@ -14,7 +14,9 @@ class UserModelTest(TestCase):
     def test_user_creation(self):
         """Test user can be created"""
         user = User.objects.create_user(
-            username="testuser", email="test@example.com", password="testpass123"
+            username="testuser",
+            email="test@example.com",
+            password="testpass123"
         )
         self.assertEqual(user.username, "testuser")
         self.assertEqual(user.email, "test@example.com")
@@ -25,7 +27,10 @@ class UserModelTest(TestCase):
 
     def test_user_str(self):
         """Test user string representation"""
-        user = User.objects.create_user(username="testuser", password="testpass123")
+        user = User.objects.create_user(
+            username="testuser",
+            password="testpass123"
+        )
         self.assertEqual(str(user), "testuser")
 
 
@@ -82,7 +87,10 @@ class RegistrationViewTest(TestCase):
 
     def test_registration_duplicate_username(self):
         """Test registration fails with duplicate username"""
-        User.objects.create_user(username="existinguser", password="testpass123")
+        User.objects.create_user(
+            username="existinguser",
+            password="testpass123"
+        )
         response = self.client.post(
             reverse("register"),
             {
@@ -107,7 +115,8 @@ class LoginViewTest(TestCase):
         """Set up test client and user"""
         self.client = Client()
         self.user = User.objects.create_user(
-            username="testuser", password="testpass123"
+            username="testuser",
+            password="testpass123"
         )
 
     def test_login_page_loads(self):
@@ -119,7 +128,11 @@ class LoginViewTest(TestCase):
     def test_login_success(self):
         """Test user can login successfully"""
         response = self.client.post(
-            reverse("login"), {"username": "testuser", "password": "testpass123"}
+            reverse("login"),
+            {
+                "username": "testuser",
+                "password": "testpass123"
+            }
         )
         self.assertRedirects(response, reverse("home"))
         self.assertTrue(response.wsgi_request.user.is_authenticated)
@@ -127,7 +140,11 @@ class LoginViewTest(TestCase):
     def test_login_invalid_credentials(self):
         """Test login fails with invalid credentials"""
         response = self.client.post(
-            reverse("login"), {"username": "testuser", "password": "wrongpassword"}
+            reverse("login"),
+            {
+                "username": "testuser",
+                "password": "wrongpassword"
+            }
         )
         self.assertEqual(response.status_code, 200)
         self.assertFalse(response.wsgi_request.user.is_authenticated)
@@ -137,7 +154,11 @@ class LoginViewTest(TestCase):
         self.user.is_active = False
         self.user.save()
         response = self.client.post(
-            reverse("login"), {"username": "testuser", "password": "testpass123"}
+            reverse("login"),
+            {
+                "username": "testuser",
+                "password": "testpass123"
+            }
         )
         self.assertEqual(response.status_code, 200)
         self.assertFalse(response.wsgi_request.user.is_authenticated)
@@ -153,7 +174,8 @@ class LogoutViewTest(TestCase):
         """Set up test client and user"""
         self.client = Client()
         self.user = User.objects.create_user(
-            username="testuser", password="testpass123"
+            username="testuser",
+            password="testpass123"
         )
 
     def test_logout_success(self):
@@ -226,7 +248,9 @@ class UserUpdateFormTest(TestCase):
     def setUp(self):
         """Set up test user"""
         self.user = User.objects.create_user(
-            username="testuser", email="test@example.com", password="testpass123"
+            username="testuser",
+            email="test@example.com",
+            password="testpass123"
         )
 
     def test_user_can_be_updated(self):
