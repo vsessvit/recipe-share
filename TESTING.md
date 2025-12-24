@@ -36,12 +36,12 @@ This document provides comprehensive testing information for the Recipe Share ap
   - [Latest Test Run](#latest-test-run)
   - [Coverage Report](#coverage-report)
 - [Testing Conclusion](#testing-conclusion)
-  - [Automated Testing](#automated-testing)
-  - [Manual Testing ](#manual-testing)
-  - [Code Quality](#code-quality)
-  - [Performance & Accessibility](#performance-and-accessibility)
-  - [Security](#security)
-  - [Compatibility](#compatibility)
+  - [Automated Testing](#automated-testing-)
+  - [Manual Testing ](#manual-testing-)
+  - [Code Quality](#code-quality-)
+  - [Performance & Accessibility](#performance--accessibility-)
+  - [Security](#security-)
+  - [Compatibility](#compatibility-)
 - [Overall Assessment](#overall-assessment)
 
 ---
