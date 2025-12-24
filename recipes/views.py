@@ -72,9 +72,9 @@ class RecipeDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         recipe = self.get_object()
-        context["comments"] = recipe.comments.filter(approved=True).select_related(
-            "user"
-        )
+        context["comments"] = recipe.comments.filter(
+            approved=True
+        ).select_related("user")
         context["comment_form"] = CommentForm()
 
         # Check if user has liked this recipe
@@ -150,9 +150,13 @@ class CategoryRecipeListView(ListView):
     paginate_by = 12
 
     def get_queryset(self):
-        self.category = get_object_or_404(Category, slug=self.kwargs["slug"])
+        self.category = get_object_or_404(
+            Category, slug=self.kwargs["slug"]
+        )
         return (
-            Recipe.objects.filter(category=self.category, status="published")
+            Recipe.objects.filter(
+                category=self.category, status="published"
+            )
             .select_related("author", "country")
             .order_by("-created_at")
         )
@@ -185,9 +189,13 @@ class CountryRecipeListView(ListView):
     paginate_by = 12
 
     def get_queryset(self):
-        self.country = get_object_or_404(Country, slug=self.kwargs["slug"])
+        self.country = get_object_or_404(
+            Country, slug=self.kwargs["slug"]
+        )
         return (
-            Recipe.objects.filter(country=self.country, status="published")
+            Recipe.objects.filter(
+                country=self.country, status="published"
+            )
             .select_related("author", "category", "country")
             .order_by("-created_at")
         )
@@ -266,9 +274,13 @@ class UserProfileView(ListView):
     paginate_by = 12
 
     def get_queryset(self):
-        self.profile_user = get_object_or_404(User, username=self.kwargs["username"])
+        self.profile_user = get_object_or_404(
+            User, username=self.kwargs["username"]
+        )
         return (
-            Recipe.objects.filter(author=self.profile_user, status="published")
+            Recipe.objects.filter(
+                author=self.profile_user, status="published"
+            )
             .select_related("category", "country")
             .order_by("-created_at")
         )
@@ -303,11 +315,13 @@ class FavoritesListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         # Get all recipes that the current user has liked
-        liked_recipe_ids = Like.objects.filter(user=self.request.user).values_list(
-            "recipe_id", flat=True
-        )
+        liked_recipe_ids = Like.objects.filter(
+            user=self.request.user
+        ).values_list("recipe_id", flat=True)
         return (
-            Recipe.objects.filter(id__in=liked_recipe_ids, status="published")
+            Recipe.objects.filter(
+                id__in=liked_recipe_ids, status="published"
+            )
             .select_related("author", "category", "country")
             .annotate(like_count=Count("likes"))
             .order_by("-created_at")
@@ -317,7 +331,8 @@ class FavoritesListView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context["total_favorites"] = self.get_queryset().count()
 
-        # Get user's liked recipe IDs (all recipes in favorites are liked by definition)
+        # Get user's liked recipe IDs
+        # (all recipes in favorites are liked by definition)
         context["user_liked_ids"] = list(
             Like.objects.filter(user=self.request.user).values_list(
                 "recipe_id", flat=True
@@ -354,7 +369,9 @@ def add_comment(request, slug):
                 comment.save()
                 messages.success(request, "Comment added successfully!")
             except Exception:
-                messages.error(request, "Unable to add comment. Please try again.")
+                messages.error(
+                    request, "Unable to add comment. Please try again."
+                )
         else:
             messages.error(request, "Error adding comment. Please try again.")
 
@@ -384,7 +401,9 @@ def delete_comment(request, pk):
             comment.delete()
             messages.success(request, "Comment deleted successfully!")
         except Exception:
-            messages.error(request, "Unable to delete comment. Please try again.")
+            messages.error(
+                request, "Unable to delete comment. Please try again."
+            )
         return redirect("recipe_detail", slug=recipe_slug)
     else:
         messages.error(request, "You can only delete your own comments.")
@@ -394,15 +413,18 @@ def delete_comment(request, pk):
 @login_required
 def toggle_like(request, slug):
     """
-    Toggle like/unlike status on a recipe. Handles both AJAX and regular requests.
+    Toggle like/unlike status on a recipe.
+    Handles both AJAX and regular requests.
 
     Args:
         request (HttpRequest): The HTTP request object
         slug (str): The unique slug identifier for the recipe
 
     Returns:
-        JsonResponse: If AJAX request, returns JSON with like status and count
-        HttpResponseRedirect: If regular request, redirects to referring page or home
+        JsonResponse: If AJAX request, returns JSON with
+            like status and count
+        HttpResponseRedirect: If regular request, redirects to
+            referring page or home
 
     Raises:
         Http404: If recipe with given slug does not exist
@@ -410,7 +432,9 @@ def toggle_like(request, slug):
     recipe = get_object_or_404(Recipe, slug=slug)
 
     try:
-        like, created = Like.objects.get_or_create(recipe=recipe, user=request.user)
+        like, created = Like.objects.get_or_create(
+            recipe=recipe, user=request.user
+        )
 
         if not created:
             like.delete()
@@ -422,9 +446,11 @@ def toggle_like(request, slug):
 
         # If AJAX request, return JSON
         if request.headers.get("X-Requested-With") == "XMLHttpRequest":
-            return JsonResponse(
-                {"success": True, "liked": liked, "total_likes": recipe.total_likes()}
-            )
+            return JsonResponse({
+                "success": True,
+                "liked": liked,
+                "total_likes": recipe.total_likes()
+            })
 
         # Otherwise, redirect back to the page the user came from
         messages.success(request, message)
@@ -433,10 +459,14 @@ def toggle_like(request, slug):
     except Exception:
         if request.headers.get("X-Requested-With") == "XMLHttpRequest":
             return JsonResponse(
-                {"success": False, "error": "Unable to update favorite status"},
+                {
+                    "success": False,
+                    "error": "Unable to update favorite status"
+                },
                 status=500,
             )
         messages.error(
-            request, "Unable to update favorite status. Please try again."
+            request,
+            "Unable to update favorite status. Please try again."
         )
         return redirect(request.META.get("HTTP_REFERER", "home"))

@@ -26,7 +26,8 @@ class UserRegisterForm(UserCreationForm):
 
         # Provide user-friendly help text
         self.fields["username"].help_text = (
-            "Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only."
+            "Required. 150 characters or fewer. "
+            "Letters, digits and @/./+/-/_ only."
         )
         self.fields["password1"].help_text = (
             "Your password must contain at least 8 characters."

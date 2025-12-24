@@ -41,7 +41,7 @@ def login_view(request):
             if user is not None:
                 login(request, user)
                 messages.success(request, f"Welcome back, {username}!")
-                return redirect("recipe_list")
+                return redirect("home")
         else:
             messages.error(
                 request,
@@ -49,5 +49,5 @@ def login_view(request):
             )
     else:
         form = AuthenticationForm()
-    
+
     return render(request, "users/login.html", {"form": form})
