@@ -68,7 +68,9 @@ class RecipeAdmin(admin.ModelAdmin):
 class CommentAdmin(admin.ModelAdmin):
     """Admin interface for Comment model"""
 
-    list_display = ("user", "recipe", "content_preview", "created_at", "approved")
+    list_display = (
+        "user", "recipe", "content_preview", "created_at", "approved"
+    )
     list_filter = ("approved", "created_at")
     search_fields = ("user__username", "recipe__title", "content")
     list_editable = ("approved",)
@@ -77,7 +79,11 @@ class CommentAdmin(admin.ModelAdmin):
 
     def content_preview(self, obj):
         """Show preview of comment content"""
-        return obj.content[:50] + "..." if len(obj.content) > 50 else obj.content
+        return (
+            obj.content[:50] + "..."
+            if len(obj.content) > 50
+            else obj.content
+        )
 
     content_preview.short_description = "Content"
 

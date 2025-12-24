@@ -75,14 +75,26 @@ class Recipe(models.Model):
     # Basic Information
     title = models.CharField(max_length=200)
     slug = models.SlugField(max_length=200, unique=True, blank=True)
-    description = models.TextField(help_text="Brief description of the recipe")
-    ingredients = models.TextField(help_text="List all ingredients (one per line)")
-    instructions = models.TextField(help_text="Step-by-step cooking instructions")
+    description = models.TextField(
+        help_text="Brief description of the recipe"
+    )
+    ingredients = models.TextField(
+        help_text="List all ingredients (one per line)"
+    )
+    instructions = models.TextField(
+        help_text="Step-by-step cooking instructions"
+    )
 
     # Time and Servings
-    prep_time = models.PositiveIntegerField(help_text="Preparation time in minutes")
-    cook_time = models.PositiveIntegerField(help_text="Cooking time in minutes")
-    servings = models.PositiveIntegerField(default=4, help_text="Number of servings")
+    prep_time = models.PositiveIntegerField(
+        help_text="Preparation time in minutes"
+    )
+    cook_time = models.PositiveIntegerField(
+        help_text="Cooking time in minutes"
+    )
+    servings = models.PositiveIntegerField(
+        default=4, help_text="Number of servings"
+    )
 
     # Additional Details
     difficulty = models.CharField(
@@ -91,7 +103,9 @@ class Recipe(models.Model):
     image = models.ImageField(upload_to="recipes/", blank=True, null=True)
 
     # Relationships
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="recipes")
+    author = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="recipes"
+    )
     category = models.ForeignKey(
         Category, on_delete=models.SET_NULL, null=True, related_name="recipes"
     )
@@ -100,7 +114,9 @@ class Recipe(models.Model):
     )
 
     # Status and Timestamps
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="draft")
+    status = models.CharField(
+        max_length=10, choices=STATUS_CHOICES, default="draft"
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -144,11 +160,15 @@ class Comment(models.Model):
     recipe = models.ForeignKey(
         Recipe, on_delete=models.CASCADE, related_name="comments"
     )
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comments")
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="comments"
+    )
     content = models.TextField(max_length=500)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    approved = models.BooleanField(default=True)  # Can be set to False for moderation
+    approved = models.BooleanField(
+        default=True
+    )  # Can be set to False for moderation
 
     class Meta:
         ordering = ["-created_at"]
@@ -165,8 +185,12 @@ class Like(models.Model):
     Model representing a like/favorite on a recipe
     """
 
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name="likes")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="likes")
+    recipe = models.ForeignKey(
+        Recipe, on_delete=models.CASCADE, related_name="likes"
+    )
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="likes"
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
