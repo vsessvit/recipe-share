@@ -32,8 +32,10 @@ class SecurityHeadersMiddleware:
         response["Content-Security-Policy"] = (
             "default-src 'self'; "
             "img-src 'self' https://res.cloudinary.com https: data: blob:; "
-            "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://stackpath.bootstrapcdn.com; "
-            "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; "
+            "script-src 'self' 'unsafe-inline' "
+            "https://cdn.jsdelivr.net https://stackpath.bootstrapcdn.com; "
+            "style-src 'self' 'unsafe-inline' "
+            "https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; "
             "font-src 'self' https://cdnjs.cloudflare.com data:; "
             "connect-src 'self' https://res.cloudinary.com; "
             "frame-ancestors 'none'; "
